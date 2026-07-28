@@ -14,27 +14,31 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
 
-    // STAFF AUTH
-    Route::post('auth/staff/register', [AuthController::class, 'register']);
-    Route::post('auth/staff/login', [AuthController::class, 'login']);
+    // ADMIN AUTH
+    Route::post('auth/admin/register', [AuthController::class, 'register']);
+    Route::post('auth/admin/login', [AuthController::class, 'login']);
 
     // CUSTOMER AUTH
     Route::post('auth/customer/register', [CustomerAuthController::class, 'register']);
     Route::post('auth/customer/login', [CustomerAuthController::class, 'login']);
 
-    // STAFF ROUTES
+    // ADMIN ROUTES
     Route::middleware(['auth:sanctum', 'staff'])->group(function () {
-        Route::post('auth/staff/logout', [AuthController::class, 'logout']);
-        Route::get('auth/staff/profile', [AuthController::class, 'profile']);
+        Route::post('auth/admin/logout', [AuthController::class, 'logout']);
+        Route::get('auth/admin/profile', [AuthController::class, 'profile']);
 
         // AUTHOR
-        Route::apiResource('authors', AuthorController::class);
+        Route::apiResource('admin/authors', AuthorController::class);
+        Route::post('admin/authors/{author}/image', [AuthorController::class, 'uploadImage']);
+        Route::delete('admin/authors/{author}/image', [AuthorController::class, 'removeImage']);
         // BOOK
-        Route::apiResource('books', BookController::class);
+        Route::apiResource('admin/books', BookController::class);
+        Route::post('admin/books/{book}/cover', [BookController::class, 'uploadCover']);
+        Route::delete('admin/books/{book}/cover', [BookController::class, 'removeCover']);
         // CUSTOMER
-        Route::apiResource('customers', CustomerController::class);
+        Route::apiResource('admin/customers', CustomerController::class);
         // COUPON
-        Route::apiResource('coupons', CouponController::class);
+        Route::apiResource('admin/coupons', CouponController::class);
     });
 
     // CUSTOMER ROUTES
@@ -43,19 +47,22 @@ Route::prefix('v1')->group(function () {
         Route::post('auth/customer/logout', [CustomerAuthController::class, 'logout']);
         Route::get('auth/customer/profile', [CustomerAuthController::class, 'profile']);
 
+        // BOOK
+        Route::get('customer/books', [BookController::class, 'index']);
+
         // PURCHASE
-        Route::get('purchases', [PurchaseController::class, 'index']);
-        Route::post('purchases', [PurchaseController::class, 'store']);
-        Route::get('purchases/{purchase}', [PurchaseController::class, 'show']);
+        Route::get('customer/purchases', [PurchaseController::class, 'index']);
+        Route::post('customer/purchases', [PurchaseController::class, 'store']);
+        Route::get('customer/purchases/{purchase}', [PurchaseController::class, 'show']);
 
         // ADDRESS
-        Route::get('my/addresses', [CustomerAddressController::class, 'myAddresses']);
-        Route::post('my/addresses', [CustomerAddressController::class, 'storeMyAddress']);
-        Route::get('addresses/{address}', [CustomerAddressController::class, 'show']);
-        Route::put('addresses/{address}', [CustomerAddressController::class, 'update']);
-        Route::delete('addresses/{address}', [CustomerAddressController::class, 'destroy']);
+        Route::get('customer/addresses', [CustomerAddressController::class, 'myAddresses']);
+        Route::post('customer/addresses', [CustomerAddressController::class, 'storeMyAddress']);
+        Route::get('customer/addresses/{address}', [CustomerAddressController::class, 'show']);
+        Route::put('customer/addresses/{address}', [CustomerAddressController::class, 'update']);
+        Route::delete('customer/addresses/{address}', [CustomerAddressController::class, 'destroy']);
 
         // COUPON
-        Route::post('coupons/check', [CouponCheckController::class, 'check']);
+        Route::post('customer/coupons/check', [CouponCheckController::class, 'check']);
     });
 });

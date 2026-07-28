@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class BookResource extends JsonResource
 {
@@ -19,7 +20,7 @@ class BookResource extends JsonResource
             'title' => $this->title,
             'year' => $this->year,
             'price' => (float) $this->price,
-            'cover_url' => $this->cover ? asset('storage/' . $this->cover) : null,
+            'cover_url' => $this->cover ? Storage::disk('public')->url($this->cover) : null,
             'author' => new AuthorResource($this->whenLoaded('author')),
             'created_at' => $this->created_at->toIso8601String(),
         ];

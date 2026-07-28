@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Book\StoreBookRequest;
 use App\Http\Requests\Book\UpdateBookRequest;
+use App\Http\Requests\Book\UploadBookCoverRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use App\Services\BookService;
@@ -51,5 +52,21 @@ class BookController extends Controller
     {
         $this->bookService->delete($book);
         return $this->successNoContent('Book deleted successfully');
+    }
+
+    public function uploadCover(UploadBookCoverRequest $request, Book $book): JsonResponse
+    {
+        $book = $this->bookService->uploadCover($book, $request->file('cover'));
+
+        return $this->success(
+            new BookResource($book),
+            'Book cover uploaded successfully'
+        );
+
+    }
+
+    public function removeCover(Book $book): JsonResponse {
+        $book = $this->bookService->removeCover($book);
+        return $this->success(new BookResource($book), 'Book cover removed successfully');
     }
 }

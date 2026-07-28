@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class AuthorResource extends JsonResource
 {
@@ -20,9 +21,11 @@ class AuthorResource extends JsonResource
             'dob' => $this->dob?->format('Y-m-d'),
             'gender' => $this->gender,
             'email' => $this->email,
+            'image_url' => $this->image ? Storage::disk('public')->url($this->image) : null,
             'follower_count' => $this->follower_count,
             'books_count' => $this->when($this->books_count !== null, $this->books_count),
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }
 }
+

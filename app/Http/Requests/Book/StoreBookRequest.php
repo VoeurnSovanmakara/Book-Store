@@ -27,7 +27,7 @@ class StoreBookRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'year' => ['required', 'integer', 'min:1450', 'max:' . (date('Y') + 1)],
             'price' => ['required', 'numeric', 'min:0'],
-            'cover' => ['nullable', 'image', 'max:2048'],
+            'cover' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 }

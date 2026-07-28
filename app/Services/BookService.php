@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Book;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 class BookService
 {
@@ -29,6 +31,26 @@ class BookService
     public function delete(Book $book): void
     {
         $book->delete();
+    }
+
+    public function uploadCover(Book $book, UploadedFile $file): Book
+    {
+        if ($book->cover) {
+            Storage::disk('public')->delete($book->cover);
+        }
+
+        $path = $file->store('books/covers', 'public');
+        $book->update(['cover' => $path]);
+        return $book;
+    }
+
+    public function removeCover(Book $book): Book
+    {
+        if ($book->cover) {
+            Storage::disk('public')->delete($book->cover);
+            $book->update(['cover' => null]);
+        }
+        return $book;
     }
     
 }

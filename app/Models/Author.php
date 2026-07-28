@@ -16,6 +16,7 @@ class Author extends Model
         'dob', 
         'gender', 
         'email', 
+        'image',
         'follower_count'
     ];
 
