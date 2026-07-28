@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Book;
+namespace App\Http\Requests\Coupon;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateBookRequest extends FormRequest
+class StoreCouponRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,11 +23,11 @@ class UpdateBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'author_id' => ['sometimes', 'required', 'exists:authors,id'],
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'year' => ['sometimes', 'required', 'integer', 'min:1450', 'max:' . (date('Y') + 1)],
-            'price' => ['sometimes', 'required', 'numeric', 'min:0'],
-            'cover' => ['sometimes', 'nullable', 'image', 'max:2048'],
+            'code' => ['required', 'string', 'max:50', 'unique:coupons,code'],
+            'amount' => ['required', 'numeric', 'min:0'],
+            'limit_count' => ['required', 'integer', 'min:1'],
+            'effective_date' => ['required', 'date'],
+            'expired_date' => ['required', 'date', 'after:effective_date'],
         ];
     }
 }
