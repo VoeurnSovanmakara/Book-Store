@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\SendPurchaseConfirmationEmail;
 use App\Models\Book;
 use App\Models\Coupon;
 use App\Models\Customer;
@@ -60,7 +61,11 @@ class PurchaseService
                 Coupon::where('code', $data['coupon_code'])->increment('used_count');
             }
 
-            return $purchase->load('details.book', 'address');
+            $purchase = $purchase->load('details.book', 'address');
+
+            SendPurchaseConfirmationEmail::dispatch($purchase);
+
+            return $purchase;
         });
     }
 
