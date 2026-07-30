@@ -15,9 +15,6 @@ class PurchaseConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct(public Purchase $purchase) { }
 
     public function build(): self
@@ -26,35 +23,5 @@ class PurchaseConfirmationMail extends Mailable
             ->markdown('emails.purchase-confirmation', [
                 'purchase' => $this->purchase->load('details.book', 'address'),
             ]);
-    }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Purchase Confirmation Mail',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
     }
 }

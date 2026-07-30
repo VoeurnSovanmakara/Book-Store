@@ -13,6 +13,12 @@ use Illuminate\Validation\ValidationException;
 
 class PurchaseService
 {
+    private const ALLOWED_TRANSITIONS = [
+        'pending' => ['paid', 'cancelled'],
+        'paid' => ['cancelled'],
+        'cancelled' => [],
+    ];
+
     public function create(Customer $customer, array $data): Purchase
     {
         $address = CustomerAddress::find($data['customer_address_id']);
@@ -85,5 +91,20 @@ class PurchaseService
 
         // discount never exceeds the subtotal itself
         return min($coupon->amount, $subTotal);
+    }
+
+    public function updateStatus(Purchase $purchase, string $newStatus): Purchase
+    {
+        $allowed = self::ALLOWED_TRANSITIONS[$purchase->status] ?? [];
+
+        if (! in_array($newStatus, $allowed, true)) {
+            throw ValidationException::withMessages([
+                'status' => ["Cannot change status from \"{$purchase->status}\" to \"{$newStatus}\"."],
+            ]);
+        }
+
+        $purchase->update(['status' => $newStatus]);
+
+        return $purchase;
     }
 }

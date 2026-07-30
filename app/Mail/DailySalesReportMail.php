@@ -14,9 +14,6 @@ class DailySalesReportMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct(public array $summary) {}
 
     public function build(): self
@@ -25,35 +22,5 @@ class DailySalesReportMail extends Mailable
             ->markdown('emails.daily-sales-report', [
                 'summary' => $this->summary,
             ]);
-    }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Daily Sales Report Mail',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
     }
 }

@@ -39,6 +39,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('admin/customers', CustomerController::class);
         // COUPON
         Route::apiResource('admin/coupons', CouponController::class);
+        // PURCHASE
+        Route::patch('admin/purchases/{purchase}/status', [PurchaseController::class, 'updateStatus']);
+        Route::get('admin/purchases', [PurchaseController::class, 'indexAll']);
     });
 
     // CUSTOMER ROUTES

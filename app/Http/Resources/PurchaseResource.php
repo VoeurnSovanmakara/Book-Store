@@ -20,6 +20,7 @@ class PurchaseResource extends JsonResource
             'sub_total_price' => (float) $this->sub_total_price,
             'discount' => (float) $this->discount,
             'total_payable' => (float) $this->total_payable,
+            'customer' => new CustomerResource($this->whenLoaded('customer')),
             'address' => new CustomerAddressResource($this->whenLoaded('address')),
             'items' => PurchaseDetailResource::collection($this->whenLoaded('details')),
             'created_at' => $this->created_at->toIso8601String(),

@@ -10,7 +10,7 @@ Artisan::command('inspire', function () {
 
 Schedule::command('coupons:clean-expired')
     ->dailyAt('02:00')
-    ->onFailure(function (){
+    ->onFailure(function () {
         \Illuminate\Support\Facades\Log::error('coupons:clean-expired failed');
     });
 
