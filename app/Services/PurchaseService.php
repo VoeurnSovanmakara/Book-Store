@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\PurchasePaid;
 use App\Jobs\SendPurchaseConfirmationEmail;
 use App\Models\Book;
 use App\Models\Coupon;
@@ -104,6 +105,10 @@ class PurchaseService
         }
 
         $purchase->update(['status' => $newStatus]);
+
+        if ($newStatus === 'paid') {
+            event(new PurchasePaid($purchase));
+        }
 
         return $purchase;
     }
