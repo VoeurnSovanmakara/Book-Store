@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Models\Purchase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class PurchaseService
@@ -70,6 +71,13 @@ class PurchaseService
 
             $purchase = $purchase->load('details.book', 'address');
 
+            Log::channel('purchases')->info('Purchase created', [
+                'purchase_id' => $purchase->id,
+                'customer_id' => $customer->id,
+                'total_payable' => $purchase->total_payable,
+                'coupon_code' => $data['coupon_code'] ?? null,
+            ]);
+
             SendPurchaseConfirmationEmail::dispatch($purchase);
 
             return $purchase;
@@ -104,7 +112,14 @@ class PurchaseService
             ]);
         }
 
+        $oldStatus = $purchase->status;
         $purchase->update(['status' => $newStatus]);
+
+        Log::channel('purchases')->info('Purchase status changed', [
+            'purchase_id' => $purchase->id,
+            'from' => $oldStatus,
+            'to' => $newStatus,
+        ]);
 
         if ($newStatus === 'paid') {
             event(new PurchasePaid($purchase));

@@ -22,7 +22,7 @@ class ReportStuckPurchases extends Command
             return self::SUCCESS;
         }
 
-        Log::warning('Purchases stuck in pending status', [
+        Log::channel('purchases')->warning('Purchases stuck in pending status', [
             'count' => $stuck->count(),
             'purchase_ids' => $stuck->pluck('id')->toArray(),
         ]);

@@ -35,7 +35,7 @@ class SendPurchasePaidEmail implements ShouldQueue
 
     public function failed(\Throwable $exception): void
     {
-        Log::error('Failed to send purchase paid email', [
+        Log::channel('api_errors')->error('Failed to send purchase paid email', [
             'purchase_id' => $this->purchase->id,
             'error' => $exception->getMessage(),
         ]);
