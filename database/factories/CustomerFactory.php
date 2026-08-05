@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Author;
+use App\Models\Customer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Author>
+ * @extends Factory<Customer>
  */
-class AuthorFactory extends Factory
+class CustomerFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,12 +17,11 @@ class AuthorFactory extends Factory
      */
     public function definition(): array
     {
-        return [
+       return [
             'name' => fake()->name(),
-            'dob' => fake()->date(),
-            'gender' => fake()->randomElement(['male', 'female', 'other']),
             'email' => fake()->unique()->safeEmail(),
-            'follower_count' => fake()->numberBetween(0, 10000),
+            'password' => 'password', // auto-hashed via the model's cast
+            'dob' => fake()->date(),
         ];
     }
 }
