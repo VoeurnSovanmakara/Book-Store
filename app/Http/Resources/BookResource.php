@@ -20,7 +20,7 @@ class BookResource extends JsonResource
             'title' => $this->title,
             'year' => $this->year,
             'price' => (float) $this->price,
-            'cover_url' => $this->cover ? Storage::disk('public')->url($this->cover) : null,
+            'cover_url' => $this->cover,
             'author' => new AuthorResource($this->whenLoaded('author')),
             'created_at' => $this->created_at->toIso8601String(),
         ];

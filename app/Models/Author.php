@@ -17,7 +17,8 @@ class Author extends Model
         'gender', 
         'email', 
         'image',
-        'follower_count'
+        'follower_count',
+        'image_public_id',
     ];
 
     protected $casts = [

@@ -3,12 +3,15 @@
 namespace App\Services;
 
 use App\Models\Book;
+use App\Services\Concerns\UploadsToCloudinary;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 
 class BookService
 {
+    use UploadsToCloudinary;
+
     public function list(int $perPage = 15): LengthAwarePaginator
     {
         return Book::query()
@@ -30,26 +33,33 @@ class BookService
 
     public function delete(Book $book): void
     {
+        if ($book->cover_public_id) {
+            $this->deleteFromCloudinary($book->cover_public_id);
+        }
+
         $book->delete();
     }
 
     public function uploadCover(Book $book, UploadedFile $file): Book
     {
-        if ($book->cover) {
-            Storage::disk('public')->delete($book->cover);
-        }
+        $this->deleteFromCloudinary($book->cover_public_id);
 
-        $path = $file->store('books/covers', 'public');
-        $book->update(['cover' => $path]);
+        $uploaded = $this->uploadToCloudinary($file, 'books/covers');
+
+        $book->update([
+            'cover' => $uploaded['url'],
+            'cover_public_id' => $uploaded['public_id'],
+        ]);
+
         return $book;
     }
 
     public function removeCover(Book $book): Book
     {
-        if ($book->cover) {
-            Storage::disk('public')->delete($book->cover);
-            $book->update(['cover' => null]);
-        }
+        $this->deleteFromCloudinary($book->cover_public_id);
+
+        $book->update(['cover' => null, 'cover_public_id' => null]);
+
         return $book;
     }
     
