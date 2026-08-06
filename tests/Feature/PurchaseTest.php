@@ -120,3 +120,25 @@ it('rolls back the entire purchase if something fails mid-transaction', function
     $this->assertDatabaseCount('purchases', 0);
     $this->assertDatabaseCount('purchase_details', 0);
 });
+
+it('rejects a purchase when requested quantity exceeds stock', function () {
+    $book = Book::factory()->create(['stock' => 2]);
+
+    $this->withToken($this->token)->postJson('/api/v1/customer/purchases', [
+        'customer_address_id' => $this->address->id,
+        'items' => [['book_id' => $book->id, 'qty' => 5]],
+    ])->assertStatus(422)->assertJsonValidationErrors('items');
+
+    expect($book->fresh()->stock)->toBe(2); // unchanged — confirms rollback
+});
+
+it('decrements stock correctly after a successful purchase', function () {
+    $book = Book::factory()->create(['stock' => 10]);
+
+    $this->withToken($this->token)->postJson('/api/v1/customer/purchases', [
+        'customer_address_id' => $this->address->id,
+        'items' => [['book_id' => $book->id, 'qty' => 3]],
+    ])->assertStatus(201);
+
+    expect($book->fresh()->stock)->toBe(7);
+});

@@ -23,6 +23,7 @@ class BookFactory extends Factory
             'title' => fake()->sentence(3),
             'year' => fake()->numberBetween(1950, 2026),
             'price' => fake()->randomFloat(2, 5, 100),
+            'stock' => fake()->numberBetween(5, 100),
         ];
     }
 }

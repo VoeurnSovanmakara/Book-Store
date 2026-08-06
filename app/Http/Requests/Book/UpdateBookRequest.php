@@ -28,6 +28,7 @@ class UpdateBookRequest extends FormRequest
             'year' => ['sometimes', 'required', 'integer', 'min:1450', 'max:' . (date('Y') + 1)],
             'price' => ['sometimes', 'required', 'numeric', 'min:0'],
             'cover' => ['sometimes', 'nullable', 'image', 'max:2048'],
+            'stock' => ['sometimes', 'required', 'integer', 'min:0'],
         ];
     }
 }

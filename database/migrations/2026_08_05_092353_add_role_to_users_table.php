@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('authors', function (Blueprint $table) {
-            $table->string('image_public_id')->nullable()->after('image');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('role')->default('member')->after('email');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('authors', function (Blueprint $table) {
-            $table->dropColumn('image_public_id');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('role');
         });
     }
 };

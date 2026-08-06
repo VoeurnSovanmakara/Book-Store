@@ -12,7 +12,7 @@ class AuthorService
 {
     use UploadsToCloudinary;
 
-    public function list(int $perPage = 15): LengthAwarePaginator
+    public function list(int $perPage = 10): LengthAwarePaginator
     {
         return Author::query()
             ->withCount('books')

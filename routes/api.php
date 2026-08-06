@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\CustomerAddressController;
 use App\Http\Controllers\Api\V1\CustomerAuthController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\PurchaseController;
+use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -26,6 +27,9 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['auth:sanctum', 'staff'])->group(function () {
         Route::post('auth/admin/logout', [AuthController::class, 'logout']);
         Route::get('auth/admin/profile', [AuthController::class, 'profile']);
+        
+        // UPDATE ROLE
+        Route::patch('admin/users/{user}/role', [UserController::class, 'updateRole']);
 
         // AUTHOR
         Route::apiResource('admin/authors', AuthorController::class);

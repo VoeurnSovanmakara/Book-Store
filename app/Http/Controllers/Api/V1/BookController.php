@@ -48,9 +48,13 @@ class BookController extends Controller
         return $this->success(new BookResource($book), 'Book updated successfully');
         
     }
+
     public function destroy(Book $book): JsonResponse
     {
+        $this->authorize('delete', $book);
+
         $this->bookService->delete($book);
+
         return $this->successNoContent('Book deleted successfully');
     }
 

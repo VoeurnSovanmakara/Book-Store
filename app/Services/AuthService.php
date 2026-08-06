@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\StaffRole;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -14,6 +15,7 @@ class AuthService
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role' => StaffRole::MEMBER,
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;

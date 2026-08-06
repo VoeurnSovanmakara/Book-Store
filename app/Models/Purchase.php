@@ -12,11 +12,12 @@ class Purchase extends Model
     use HasFactory;
     
     protected $fillable = [
-        'customer_id',
-        'customer_address_id',
-        'sub_total_price',
-        'discount',
-        'total_payable',
+        'customer_id', 
+        'customer_address_id', 
+        'coupon_id',
+        'sub_total_price', 
+        'discount', 
+        'total_payable', 
         'status',
     ];
 
@@ -41,4 +42,10 @@ class Purchase extends Model
     {
         return $this->hasMany(PurchaseDetail::class);
     }
+
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
+    }
 }
+

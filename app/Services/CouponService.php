@@ -7,7 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class CouponService
 {
-    public function list(int $perPage = 15): LengthAwarePaginator
+    public function list(int $perPage = 10): LengthAwarePaginator
     {
         return Coupon::query()->latest()->paginate($perPage);
     }

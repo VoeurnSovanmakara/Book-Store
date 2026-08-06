@@ -28,6 +28,7 @@ class StoreBookRequest extends FormRequest
             'year' => ['required', 'integer', 'min:1450', 'max:' . (date('Y') + 1)],
             'price' => ['required', 'numeric', 'min:0'],
             'cover' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'stock' => ['required', 'integer', 'min:0'],
         ];
     }
 }

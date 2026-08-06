@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('gender',['male', 'female', 'other'])->nullable();
             $table->string('email')->unique();
             $table->string('image')->nullable();
+            $table->string('image_public_id')->nullable();
             $table->unsignedInteger('follower_count')->default(0);
             $table->timestamps();
         });

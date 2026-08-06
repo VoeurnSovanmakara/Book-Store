@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('books', function (Blueprint $table) {
-            $table->string('cover_public_id')->nullable()->after('cover');
+        Schema::table('purchases', function (Blueprint $table) {
+            $table->foreignId('coupon_id')->nullable()->after('customer_address_id')
+                ->constrained()->nullOnDelete();
         });
     }
 
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('books', function (Blueprint $table) {
-            $table->dropColumn('cover_public_id');
+        Schema::table('purchases', function (Blueprint $table) {
+            $table->dropForeign(['coupon_id']);
+            $table->dropColumn('coupon_id');
         });
     }
 };

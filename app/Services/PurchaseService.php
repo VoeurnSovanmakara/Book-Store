@@ -32,9 +32,9 @@ class PurchaseService
         }
 
         return DB::transaction(function() use ($customer, $address, $data) {
-            $books = Book::whereIn('id', collect($data['items'])->pluck('book_id'))
-                ->get()
-                ->keyBy('id');
+
+            $bookIds = collect($data['items'])->pluck('book_id');
+            $books = Book::whereIn('id', $bookIds)->lockForUpdate()->get()->keyBy('id');
 
             $subTotal = 0;
             $lineItems = [];
@@ -42,6 +42,13 @@ class PurchaseService
 
             foreach ($data['items'] as $item) {
                 $book = $books[$item['book_id']];
+
+                if ($book->stock < $item['qty']) {
+                    throw ValidationException::withMessages([
+                        'items' => ["\"{$book->title}\" only has {$book->stock} in stock, requested {$item['qty']}."],
+                    ]);
+                }
+
                 $lineTotal = $book->price * $item['qty'];
                 $subTotal += $lineTotal;
 
@@ -52,11 +59,19 @@ class PurchaseService
                 ];
             }
 
-            $discount = $this->resolveDiscount($data['coupon_code'] ?? null, $subTotal);
+            $coupon = null;
+            $discount = 0;
+
+            if (! empty($data['coupon_code'])) {
+                $coupon = Coupon::where('code', $data['coupon_code'])->first();
+                $discount = $this->resolveDiscount($data['coupon_code'], $subTotal);
+            }
+
 
             $purchase = Purchase::create([
                 'customer_id' => $customer->id,
                 'customer_address_id' => $address->id,
+                'coupon_id' => $coupon?->id,
                 'sub_total_price' => $subTotal,
                 'discount' => $discount,
                 'total_payable' => max($subTotal - $discount, 0),
@@ -65,11 +80,15 @@ class PurchaseService
 
             $purchase->details()->createMany($lineItems);
 
-            if (! empty($data['coupon_code'])) {
-                Coupon::where('code', $data['coupon_code'])->increment('used_count');
+            foreach ($data['items'] as $item) {
+                Book::where('id', $item['book_id'])->decrement('stock', $item['qty']);
             }
 
-            $purchase = $purchase->load('details.book', 'address');
+            if ($coupon) {
+                $coupon->increment('used_count');
+            }
+
+            $purchase = $purchase->load('details.book', 'address', 'coupon');
 
             Log::channel('purchases')->info('Purchase created', [
                 'purchase_id' => $purchase->id,
@@ -98,7 +117,6 @@ class PurchaseService
             ]);
         }
 
-        // discount never exceeds the subtotal itself
         return min($coupon->amount, $subTotal);
     }
 
@@ -122,7 +140,7 @@ class PurchaseService
         ]);
 
         if ($newStatus === 'paid') {
-            event(new PurchasePaid($purchase));
+            event(new \App\Events\PurchasePaid($purchase));
         }
 
         return $purchase;

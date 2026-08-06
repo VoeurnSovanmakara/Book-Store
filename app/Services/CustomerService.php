@@ -7,7 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class CustomerService
 {
-    public function list(int $perPage = 15): LengthAwarePaginator
+    public function list(int $perPage = 10): LengthAwarePaginator
     {
         return Customer::query()
             ->latest()

@@ -21,6 +21,8 @@ class BookResource extends JsonResource
             'year' => $this->year,
             'price' => (float) $this->price,
             'cover_url' => $this->cover,
+            'stock' => $this->stock,
+            'in_stock' => $this->stock > 0,
             'author' => new AuthorResource($this->whenLoaded('author')),
             'created_at' => $this->created_at->toIso8601String(),
         ];

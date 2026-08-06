@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('year');
             $table->decimal('price', 10, 2);
             $table->string('cover')->nullable();
+            $table->string('cover_public_id')->nullable();
             $table->timestamps();
             $table->index(['author_id', 'year']);
         });
